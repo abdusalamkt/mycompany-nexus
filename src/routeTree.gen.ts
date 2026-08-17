@@ -21,7 +21,10 @@ import { Route as AuthenticatedNewsRouteImport } from './routes/_authenticated/n
 import { Route as AuthenticatedPoliciesRouteImport } from './routes/_authenticated/policies'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWorkersRouteImport } from './routes/_authenticated/workers'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
+import { Route as AuthenticatedAdminDepartmentsRouteImport } from './routes/_authenticated/admin/departments'
 import { Route as AuthenticatedAdminRolesRouteImport } from './routes/_authenticated/admin/roles'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,11 +86,28 @@ const AuthenticatedWorkersRoute = AuthenticatedWorkersRouteImport.update({
   path: '/workers',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/admin/audit',
+  path: '/admin/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminDepartmentsRoute =
+  AuthenticatedAdminDepartmentsRouteImport.update({
+    id: '/admin/departments',
+    path: '/admin/departments',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRolesRoute = AuthenticatedAdminRolesRouteImport.update({
   id: '/admin/roles',
   path: '/admin/roles',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -106,7 +126,10 @@ export interface FileRoutesByFullPath {
   '/policies': typeof AuthenticatedPoliciesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/workers': typeof AuthenticatedWorkersRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
   '/admin/roles': typeof AuthenticatedAdminRolesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
 }
 export interface FileRoutesByTo {
@@ -121,7 +144,10 @@ export interface FileRoutesByTo {
   '/policies': typeof AuthenticatedPoliciesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/workers': typeof AuthenticatedWorkersRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
   '/admin/roles': typeof AuthenticatedAdminRolesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
 }
 export interface FileRoutesById {
@@ -138,7 +164,10 @@ export interface FileRoutesById {
   '/_authenticated/policies': typeof AuthenticatedPoliciesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/workers': typeof AuthenticatedWorkersRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
   '/_authenticated/admin/roles': typeof AuthenticatedAdminRolesRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
 }
 export interface FileRouteTypes {
@@ -155,7 +184,10 @@ export interface FileRouteTypes {
     | '/policies'
     | '/profile'
     | '/workers'
+    | '/admin/audit'
+    | '/admin/departments'
     | '/admin/roles'
+    | '/admin/settings'
     | '/admin/users'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -170,7 +202,10 @@ export interface FileRouteTypes {
     | '/policies'
     | '/profile'
     | '/workers'
+    | '/admin/audit'
+    | '/admin/departments'
     | '/admin/roles'
+    | '/admin/settings'
     | '/admin/users'
   id:
     | '__root__'
@@ -186,7 +221,10 @@ export interface FileRouteTypes {
     | '/_authenticated/policies'
     | '/_authenticated/profile'
     | '/_authenticated/workers'
+    | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/departments'
     | '/_authenticated/admin/roles'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/users'
   fileRoutesById: FileRoutesById
 }
@@ -284,11 +322,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/admin/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/departments': {
+      id: '/_authenticated/admin/departments'
+      path: '/admin/departments'
+      fullPath: '/admin/departments'
+      preLoaderRoute: typeof AuthenticatedAdminDepartmentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/roles': {
       id: '/_authenticated/admin/roles'
       path: '/admin/roles'
       fullPath: '/admin/roles'
       preLoaderRoute: typeof AuthenticatedAdminRolesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/users': {
@@ -309,7 +368,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPoliciesRoute: typeof AuthenticatedPoliciesRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedWorkersRoute: typeof AuthenticatedWorkersRoute
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminDepartmentsRoute: typeof AuthenticatedAdminDepartmentsRoute
   AuthenticatedAdminRolesRoute: typeof AuthenticatedAdminRolesRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
@@ -321,7 +383,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPoliciesRoute: AuthenticatedPoliciesRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedWorkersRoute: AuthenticatedWorkersRoute,
+  AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+  AuthenticatedAdminDepartmentsRoute: AuthenticatedAdminDepartmentsRoute,
   AuthenticatedAdminRolesRoute: AuthenticatedAdminRolesRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
 }
 
