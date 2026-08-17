@@ -37,14 +37,23 @@ function ResetPasswordPage() {
     });
   }, []);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
-    if (password.length < 10) return toast.error("Use at least 10 characters.");
-    if (password !== confirm) return toast.error("Passwords do not match.");
+    if (password.length < 10) {
+      toast.error("Use at least 10 characters.");
+      return;
+    }
+    if (password !== confirm) {
+      toast.error("Passwords do not match.");
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Password updated. Please sign in again.");
     await supabase.auth.signOut();
     navigate({ to: "/login", replace: true });

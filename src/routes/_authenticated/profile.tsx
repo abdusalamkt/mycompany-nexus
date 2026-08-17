@@ -34,12 +34,15 @@ function ProfilePage() {
     setPhone(profile?.phone ?? "");
   }, [profile]);
 
-  async function save() {
+  async function save(): Promise<void> {
     if (!profile) return;
     setSaving(true);
     const { error } = await supabase.from("profiles").update({ full_name: fullName, phone }).eq("id", profile.id);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Profile updated");
     refresh();
   }

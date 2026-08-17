@@ -36,7 +36,7 @@ export function UserStatusBadge({ status }: { status: string }) {
     suspended: "bg-status-expired/15 text-status-expired border-status-expired/30",
   };
   return (
-    <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize", map[status] ?? map.inactive)}>
+    <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize", map[status] ?? map["inactive"])}>
       {status}
     </span>
   );
