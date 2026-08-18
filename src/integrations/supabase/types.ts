@@ -80,6 +80,116 @@ export type Database = {
         }
         Relationships: []
       }
+      employees: {
+        Row: {
+          address: string | null
+          contract_end_date: string | null
+          created_at: string
+          created_by: string | null
+          date_of_birth: string | null
+          department_id: string | null
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          emergency_contact_relation: string | null
+          emirates_id: string | null
+          emirates_id_expiry: string | null
+          employee_code: string | null
+          employment_type: string
+          full_name: string
+          gender: string | null
+          id: string
+          insurance_expiry: string | null
+          job_title: string | null
+          joining_date: string | null
+          nationality: string | null
+          notes: string | null
+          passport_expiry: string | null
+          passport_number: string | null
+          phone: string | null
+          photo_url: string | null
+          salary: number | null
+          status: string
+          updated_at: string
+          visa_expiry: string | null
+          visa_number: string | null
+        }
+        Insert: {
+          address?: string | null
+          contract_end_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          department_id?: string | null
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
+          emirates_id?: string | null
+          emirates_id_expiry?: string | null
+          employee_code?: string | null
+          employment_type?: string
+          full_name: string
+          gender?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          job_title?: string | null
+          joining_date?: string | null
+          nationality?: string | null
+          notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          salary?: number | null
+          status?: string
+          updated_at?: string
+          visa_expiry?: string | null
+          visa_number?: string | null
+        }
+        Update: {
+          address?: string | null
+          contract_end_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          department_id?: string | null
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
+          emirates_id?: string | null
+          emirates_id_expiry?: string | null
+          employee_code?: string | null
+          employment_type?: string
+          full_name?: string
+          gender?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          job_title?: string | null
+          joining_date?: string | null
+          nationality?: string | null
+          notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          salary?: number | null
+          status?: string
+          updated_at?: string
+          visa_expiry?: string | null
+          visa_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permissions: {
         Row: {
           code: string
