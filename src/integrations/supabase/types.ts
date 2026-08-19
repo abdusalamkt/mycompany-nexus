@@ -50,6 +50,51 @@ export type Database = {
         }
         Relationships: []
       }
+      company_policies: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          effective_date: string | null
+          file_name: string | null
+          file_path: string | null
+          id: string
+          is_published: boolean
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          effective_date?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          is_published?: boolean
+          title: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          effective_date?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          is_published?: boolean
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       departments: {
         Row: {
           created_at: string
@@ -79,6 +124,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      documents: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          employee_id: string | null
+          expiry_date: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          owner_user_id: string | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+          visibility: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          employee_id?: string | null
+          expiry_date?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          owner_user_id?: string | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+          visibility?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          employee_id?: string | null
+          expiry_date?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          owner_user_id?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       employees: {
         Row: {
@@ -189,6 +296,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      news_posts: {
+        Row: {
+          author_id: string | null
+          body: string
+          category: string
+          created_at: string
+          id: string
+          is_published: boolean
+          published_at: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          body: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       permissions: {
         Row: {
@@ -384,6 +530,101 @@ export type Database = {
             columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workers: {
+        Row: {
+          contract_end_date: string | null
+          created_at: string
+          created_by: string | null
+          department_id: string | null
+          emirates_id: string | null
+          emirates_id_expiry: string | null
+          employment_type: string
+          full_name: string
+          id: string
+          insurance_expiry: string | null
+          joining_date: string | null
+          labour_card_expiry: string | null
+          labour_card_number: string | null
+          nationality: string | null
+          notes: string | null
+          passport_expiry: string | null
+          passport_number: string | null
+          phone: string | null
+          photo_url: string | null
+          site: string | null
+          status: string
+          trade: string | null
+          updated_at: string
+          visa_expiry: string | null
+          visa_number: string | null
+          worker_code: string | null
+        }
+        Insert: {
+          contract_end_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          emirates_id?: string | null
+          emirates_id_expiry?: string | null
+          employment_type?: string
+          full_name: string
+          id?: string
+          insurance_expiry?: string | null
+          joining_date?: string | null
+          labour_card_expiry?: string | null
+          labour_card_number?: string | null
+          nationality?: string | null
+          notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          site?: string | null
+          status?: string
+          trade?: string | null
+          updated_at?: string
+          visa_expiry?: string | null
+          visa_number?: string | null
+          worker_code?: string | null
+        }
+        Update: {
+          contract_end_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          emirates_id?: string | null
+          emirates_id_expiry?: string | null
+          employment_type?: string
+          full_name?: string
+          id?: string
+          insurance_expiry?: string | null
+          joining_date?: string | null
+          labour_card_expiry?: string | null
+          labour_card_number?: string | null
+          nationality?: string | null
+          notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          site?: string | null
+          status?: string
+          trade?: string | null
+          updated_at?: string
+          visa_expiry?: string | null
+          visa_number?: string | null
+          worker_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workers_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
         ]
