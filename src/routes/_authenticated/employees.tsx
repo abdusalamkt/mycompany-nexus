@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Mail, Phone, Pencil } from "lucide-react";
+import { Plus, Mail, Phone, Pencil, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import {
@@ -12,6 +12,7 @@ import { AppShell } from "@/components/portal/AppShell";
 import { EmployeeFormDialog } from "@/components/portal/EmployeeFormDialog";
 import { EmptyState, ErrorState, LoadingState } from "@/components/portal/States";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { StatusBadge, expiryStatus } from "@/components/portal/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -86,41 +87,80 @@ function EmployeesPage() {
   const canEdit = can("employees.edit");
   const deptName = (id: string | null) => departments.find((d) => d.id === id)?.name ?? "Unassigned";
 
+  const canSeeDocs = can("employees.edit") || can("employees.create") || can("users.view");
+
   function Grid({ items }: { items: EmployeeRecord[] }) {
     if (items.length === 0) return <EmptyState title="No employees in this department yet" />;
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="space-y-3">
         {items.map((e) => {
           const photo = e.photo_url ? query.data?.photos[e.photo_url] : undefined;
           return (
             <Card key={e.id} className="transition-shadow hover:shadow-md">
-              <CardContent className="space-y-4 pt-6">
-                <button type="button" className="flex w-full items-start gap-3 text-left" onClick={() => setDetail(e)}>
-                  <Avatar className="size-14">
-                    {photo ? <AvatarImage src={photo} alt={e.full_name} /> : null}
-                    <AvatarFallback>{initialsOf(e.full_name)}</AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold">{e.full_name}</p>
-                    <p className="truncate text-sm text-muted-foreground">{e.job_title ?? "—"}</p>
-                    <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <StatusPill status={e.status} />
-                      <Badge variant="secondary">{label(EMPLOYMENT_TYPES, e.employment_type)}</Badge>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 lg:grid-cols-[minmax(220px,1.4fr)_minmax(0,1.6fr)_minmax(0,1.4fr)_auto]">
+                  <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={() => setDetail(e)}>
+                    <Avatar className="size-12 shrink-0">
+                      {photo ? <AvatarImage src={photo} alt={e.full_name} /> : null}
+                      <AvatarFallback>{initialsOf(e.full_name)}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold">{e.full_name}</p>
+                      <p className="truncate text-sm text-muted-foreground">{e.job_title ?? "—"}</p>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                        <StatusPill status={e.status} />
+                        <Badge variant="secondary">{label(EMPLOYMENT_TYPES, e.employment_type)}</Badge>
+                      </div>
                     </div>
+                  </button>
+
+                  <div className="col-span-2 min-w-0 space-y-1 text-sm text-muted-foreground lg:col-span-1">
+                    <p className="flex items-center gap-2 truncate">
+                      <Building2 className="size-3.5 shrink-0" />{deptName(e.department_id)} · ID {e.employee_code ?? "—"}
+                    </p>
+                    <p className="flex items-center gap-2 truncate">
+                      <Mail className="size-3.5 shrink-0" />{e.email ?? "—"}
+                    </p>
+                    <p className="flex items-center gap-2 truncate">
+                      <Phone className="size-3.5 shrink-0" />{e.phone ?? "—"}
+                    </p>
                   </div>
-                </button>
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  <p className="truncate">ID: {e.employee_code ?? "—"} · {deptName(e.department_id)}</p>
-                  {e.email && <p className="flex items-center gap-2 truncate"><Mail className="size-3.5" />{e.email}</p>}
-                  {e.phone && <p className="flex items-center gap-2 truncate"><Phone className="size-3.5" />{e.phone}</p>}
+
+                  {canSeeDocs ? (
+                    <div className="col-span-2 min-w-0 lg:col-span-1">
+                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Document expiry
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {([
+                          ["Passport", e.passport_expiry],
+                          ["Visa", e.visa_expiry],
+                          ["Emirates ID", e.emirates_id_expiry],
+                          ["Insurance", e.insurance_expiry],
+                        ] as [string, string | null][]).map(([name, date]) => (
+                          <StatusBadge
+                            key={name}
+                            status={expiryStatus(date)}
+                            label={`${name}: ${date ? formatDate(date) : "Missing"}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="hidden lg:block" />
+                  )}
+
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => setDetail(e)}>View</Button>
+                    {canEdit && (
+                      <EmployeeFormDialog
+                        employee={e}
+                        departments={departments}
+                        trigger={<Button variant="outline" size="sm"><Pencil className="size-3.5" />Edit</Button>}
+                      />
+                    )}
+                  </div>
                 </div>
-                {canEdit && (
-                  <EmployeeFormDialog
-                    employee={e}
-                    departments={departments}
-                    trigger={<Button variant="outline" size="sm" className="w-full"><Pencil className="size-3.5" />Edit</Button>}
-                  />
-                )}
               </CardContent>
             </Card>
           );

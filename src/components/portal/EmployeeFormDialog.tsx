@@ -18,6 +18,9 @@ import {
 
 type Draft = Record<string, string>;
 
+/** Radix Select rejects an empty string value, so omit the prop when unset. */
+const sel = (v: string | undefined) => (v ? { value: v } : {});
+
 const EMPTY: Draft = {
   full_name: "", employee_code: "", email: "", phone: "", nationality: "", date_of_birth: "",
   gender: "", address: "", department_id: "", job_title: "", employment_type: "full_time",
@@ -148,7 +151,7 @@ export function EmployeeFormDialog({
                 <Input type="date" value={draft['date_of_birth'] ?? ""} onChange={(e) => set("date_of_birth")(e.target.value)} />
               </Field>
               <Field label="Gender">
-                <Select value={draft['gender'] || undefined} onValueChange={set("gender")}>
+                <Select {...sel(draft['gender'])} onValueChange={set("gender")}>
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
@@ -173,7 +176,7 @@ export function EmployeeFormDialog({
             <h3 className="text-sm font-semibold">Job details</h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Department">
-                <Select value={draft['department_id'] || undefined} onValueChange={set("department_id")}>
+                <Select {...sel(draft['department_id'])} onValueChange={set("department_id")}>
                   <SelectTrigger><SelectValue placeholder="Unassigned" /></SelectTrigger>
                   <SelectContent>
                     {departments.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
