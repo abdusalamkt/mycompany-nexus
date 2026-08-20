@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Users, UserCheck, Briefcase, CalendarOff, FileWarning, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { formatDate } from "@/lib/employees";
+import { StatusBadge, expiryStatus } from "@/components/portal/StatusBadge";
 import { useSession } from "@/lib/session";
 import { AppShell } from "@/components/portal/AppShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,6 +44,61 @@ function DashboardPage() {
   const { profile, roles, can } = useSession();
   const isStaffAdmin = can("users.view");
 
+  const expiries = useQuery({
+    queryKey: ["dashboard-expiries"],
+    enabled: can("employees.view") || can("workers.view"),
+    queryFn: async () => {
+      const [emp, wrk] = await Promise.all([
+        can("employees.view")
+          ? supabase.from("employees").select("id, full_name, passport_expiry, visa_expiry, emirates_id_expiry, insurance_expiry")
+          : Promise.resolve({ data: [] as never[] }),
+        can("workers.view")
+          ? supabase.from("workers").select("id, full_name, passport_expiry, visa_expiry, emirates_id_expiry, labour_card_expiry, insurance_expiry")
+          : Promise.resolve({ data: [] as never[] }),
+      ]);
+      const items: { key: string; person: string; kind: string; date: string; group: string }[] = [];
+      const push = (group: string, rows: Record<string, unknown>[]) => {
+        for (const row of rows) {
+          const person = String(row['full_name'] ?? "");
+          for (const [field, kind] of [
+            ["passport_expiry", "Passport"],
+            ["visa_expiry", "Visa"],
+            ["emirates_id_expiry", "Emirates ID"],
+            ["labour_card_expiry", "Labour card"],
+            ["insurance_expiry", "Insurance"],
+          ] as [string, string][]) {
+            const value = row[field];
+            if (typeof value === "string" && value) {
+              items.push({ key: `${row['id']}-${field}`, person, kind, date: value, group });
+            }
+          }
+        }
+      };
+      push("Employee", (emp.data ?? []) as Record<string, unknown>[]);
+      push("Worker", (wrk.data ?? []) as Record<string, unknown>[]);
+      return items
+        .filter((i) => expiryStatus(i.date) !== "valid")
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(0, 12);
+    },
+  });
+
+  const counts = useQuery({
+    queryKey: ["dashboard-people-counts"],
+    enabled: can("employees.view") || can("workers.view"),
+    queryFn: async () => {
+      const [emp, wrk] = await Promise.all([
+        can("employees.view")
+          ? supabase.from("employees").select("id", { count: "exact", head: true })
+          : Promise.resolve({ count: null }),
+        can("workers.view")
+          ? supabase.from("workers").select("id", { count: "exact", head: true })
+          : Promise.resolve({ count: null }),
+      ]);
+      return { employees: emp.count, workers: wrk.count };
+    },
+  });
+
   const stats = useQuery({
     queryKey: ["dashboard-stats"],
     enabled: isStaffAdmin,
@@ -71,7 +128,8 @@ function DashboardPage() {
             <StatCard label="Portal Accounts" value={stats.data!.total} icon={Users} />
             <StatCard label="Active Accounts" value={stats.data!.active} icon={UserCheck} />
             <StatCard label="Inactive / Suspended" value={stats.data!.inactive} icon={ShieldAlert} />
-            <StatCard label="Workers" value="—" icon={Briefcase} hint="Available in the workers module" />
+            <StatCard label="Employees" value={counts.data?.employees ?? "—"} icon={Users} />
+            <StatCard label="Workers" value={counts.data?.workers ?? "—"} icon={Briefcase} />
           </div>
         )
       ) : (
@@ -88,10 +146,26 @@ function DashboardPage() {
             <CardDescription>Passport, visa, Emirates ID, licence and certificate expiries.</CardDescription>
           </CardHeader>
           <CardContent>
-            <EmptyState
-              title="No expiry records yet"
-              description="Expiry tracking activates once employee documents are added in Phase 2/3."
-            />
+            {expiries.isLoading ? (
+              <LoadingState rows={2} />
+            ) : (expiries.data?.length ?? 0) === 0 ? (
+              <EmptyState
+                title="Nothing expiring soon"
+                description="Passport, visa, Emirates ID, labour card and insurance dates are all valid."
+              />
+            ) : (
+              <ul className="divide-y divide-border">
+                {expiries.data!.map((item) => (
+                  <li key={item.key} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{item.person}</p>
+                      <p className="text-xs text-muted-foreground">{item.group} · {item.kind} · {formatDate(item.date)}</p>
+                    </div>
+                    <StatusBadge status={expiryStatus(item.date)} />
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
 
@@ -108,6 +182,15 @@ function DashboardPage() {
             )}
             {can("audit.view") && (
               <Button variant="outline" asChild><Link to="/admin/audit">View audit log</Link></Button>
+            )}
+            {can("employees.view") && (
+              <Button variant="outline" asChild><Link to="/employees">Staff list</Link></Button>
+            )}
+            {can("workers.view") && (
+              <Button variant="outline" asChild><Link to="/workers">Workers</Link></Button>
+            )}
+            {can("documents.view") && (
+              <Button variant="outline" asChild><Link to="/documents">Documents</Link></Button>
             )}
             <Button variant="outline" asChild><Link to="/profile">My profile</Link></Button>
           </CardContent>

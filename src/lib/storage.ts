@@ -9,7 +9,7 @@ export async function uploadCompanyFile(folder: string, file: File) {
   if (!check.ok) throw new Error(check.error);
   const path = `${folder}/${check.safeName}`;
   const { error } = await supabase.storage.from(COMPANY_BUCKET).upload(path, file, {
-    contentType: file.type || undefined,
+    ...(file.type ? { contentType: file.type } : {}),
     upsert: false,
   });
   if (error) throw error;
