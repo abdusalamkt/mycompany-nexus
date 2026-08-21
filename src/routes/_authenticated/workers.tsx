@@ -36,12 +36,17 @@ function WorkersPage() {
   const { can } = useSession();
   const [search, setSearch] = useState("");
 
+  const fullAccess = can("workers.view");
+  const directoryOnly = !fullAccess && can("workers.view_directory");
+
   const query = useQuery({
-    queryKey: ["workers"],
-    enabled: can("workers.view"),
+    queryKey: ["workers", fullAccess ? "full" : "directory"],
+    enabled: fullAccess || directoryOnly,
     queryFn: async () => {
       const [workersRes, departmentsRes] = await Promise.all([
-        supabase.from("workers").select("*").order("full_name"),
+        fullAccess
+          ? supabase.from("workers").select("*").order("full_name")
+          : supabase.rpc("worker_directory"),
         supabase.from("departments").select("id, name").eq("is_active", true).order("name"),
       ]);
       if (workersRes.error) throw workersRes.error;
@@ -53,7 +58,7 @@ function WorkersPage() {
   });
 
   const departments = query.data?.departments ?? [];
-  const canEdit = can("workers.edit");
+  const canEdit = fullAccess && can("workers.edit");
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -62,7 +67,7 @@ function WorkersPage() {
     );
   }, [query.data, search]);
 
-  if (!can("workers.view")) {
+  if (!fullAccess && !directoryOnly) {
     return (
       <AppShell title="Workers">
         <EmptyState title="You don't have access to the workers module" />
@@ -103,20 +108,24 @@ function WorkersPage() {
                     <p className="flex items-center gap-2 truncate"><Phone className="size-3.5 shrink-0" />{w.phone ?? "—"}</p>
                   </div>
 
-                  <div className="col-span-2 min-w-0 lg:col-span-1">
-                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">Document expiry</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {([
-                        ["Passport", w.passport_expiry],
-                        ["Visa", w.visa_expiry],
-                        ["Emirates ID", w.emirates_id_expiry],
-                        ["Labour card", w.labour_card_expiry],
-                        ["Insurance", w.insurance_expiry],
-                      ] as [string, string | null][]).map(([name, d]) => (
-                        <StatusBadge key={name} status={expiryStatus(d)} label={`${name}: ${d ? formatDate(d) : "Missing"}`} />
-                      ))}
+                  {fullAccess ? (
+                    <div className="col-span-2 min-w-0 lg:col-span-1">
+                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">Document expiry</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {([
+                          ["Passport", w.passport_expiry],
+                          ["Visa", w.visa_expiry],
+                          ["Emirates ID", w.emirates_id_expiry],
+                          ["Labour card", w.labour_card_expiry],
+                          ["Insurance", w.insurance_expiry],
+                        ] as [string, string | null][]).map(([name, d]) => (
+                          <StatusBadge key={name} status={expiryStatus(d)} label={`${name}: ${d ? formatDate(d) : "Missing"}`} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="hidden lg:block" />
+                  )}
 
                   <div className="shrink-0">
                     {canEdit && (
@@ -138,7 +147,9 @@ function WorkersPage() {
   return (
     <AppShell
       title="Workers"
-      description="Site workforce with trades, sites and document expiry status."
+      description={fullAccess
+        ? "Site workforce with trades, sites and document expiry status."
+        : "Site workforce directory with trades and sites."}
       actions={can("workers.create") ? (
         <WorkerFormDialog departments={departments}
           trigger={<Button><Plus className="size-4" />Add worker</Button>} />

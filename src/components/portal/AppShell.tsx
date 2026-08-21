@@ -22,6 +22,7 @@ interface NavItem {
   to: string;
   icon: typeof LayoutDashboard;
   permission?: string;
+  anyPermission?: string[];
 }
 
 interface NavGroup {
@@ -37,8 +38,8 @@ const NAV: NavGroup[] = [
   {
     title: "People",
     items: [
-      { label: "Staff List", to: "/employees", icon: Users, permission: "employees.view" },
-      { label: "Workers", to: "/workers", icon: Briefcase, permission: "workers.view" },
+      { label: "Staff List", to: "/employees", icon: Users, anyPermission: ["employees.view", "employees.view_directory"] },
+      { label: "Workers", to: "/workers", icon: Briefcase, anyPermission: ["workers.view", "workers.view_directory"] },
       { label: "My Profile", to: "/profile", icon: IdCard },
     ],
   },
@@ -69,7 +70,11 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className="flex flex-col gap-6 px-3 py-4">
       {NAV.map((group) => {
-        const items = group.items.filter((i) => !i.permission || can(i.permission));
+        const items = group.items.filter(
+          (i) =>
+            (!i.permission || can(i.permission)) &&
+            (!i.anyPermission || i.anyPermission.some((c) => can(c))),
+        );
         if (items.length === 0) return null;
         return (
           <div key={group.title}>

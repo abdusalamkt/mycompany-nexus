@@ -50,12 +50,17 @@ function EmployeesPage() {
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState<EmployeeRecord | null>(null);
 
+  const fullAccess = can("employees.view");
+  const directoryOnly = !fullAccess && can("employees.view_directory");
+
   const query = useQuery({
-    queryKey: ["employees"],
-    enabled: can("employees.view"),
+    queryKey: ["employees", fullAccess ? "full" : "directory"],
+    enabled: fullAccess || directoryOnly,
     queryFn: async () => {
       const [employeesRes, departmentsRes] = await Promise.all([
-        supabase.from("employees").select("*").order("full_name"),
+        fullAccess
+          ? supabase.from("employees").select("*").order("full_name")
+          : supabase.rpc("staff_directory"),
         supabase.from("departments").select("id, name").eq("is_active", true).order("name"),
       ]);
       if (employeesRes.error) throw employeesRes.error;
@@ -75,7 +80,7 @@ function EmployeesPage() {
     );
   }, [query.data, search]);
 
-  if (!can("employees.view")) {
+  if (!fullAccess && !directoryOnly) {
     return (
       <AppShell title="Employees">
         <EmptyState title="You don't have access to the staff list"
@@ -87,7 +92,7 @@ function EmployeesPage() {
   const canEdit = can("employees.edit");
   const deptName = (id: string | null) => departments.find((d) => d.id === id)?.name ?? "Unassigned";
 
-  const canSeeDocs = can("employees.edit") || can("employees.create") || can("users.view");
+  const canSeeDocs = fullAccess && (can("employees.edit") || can("employees.create") || can("users.view"));
 
   function Grid({ items }: { items: EmployeeRecord[] }) {
     if (items.length === 0) return <EmptyState title="No employees in this department yet" />;
@@ -172,7 +177,9 @@ function EmployeesPage() {
   return (
     <AppShell
       title="Employees"
-      description="Staff records grouped by department, with photos and document details."
+      description={fullAccess
+        ? "Staff records grouped by department, with photos and document details."
+        : "Company staff directory grouped by department."}
       actions={
         can("employees.create") ? (
           <EmployeeFormDialog
@@ -235,22 +242,26 @@ function EmployeesPage() {
                 ["Status", label(EMPLOYEE_STATUSES, detail.status)],
                 ["Email", detail.email ?? "—"],
                 ["Phone", detail.phone ?? "—"],
-                ["Nationality", detail.nationality ?? "—"],
-                ["Date of birth", formatDate(detail.date_of_birth)],
-                ["Joining date", formatDate(detail.joining_date)],
-                ["Contract end", formatDate(detail.contract_end_date)],
-                ["Passport no.", detail.passport_number ?? "—"],
-                ["Passport expiry", formatDate(detail.passport_expiry)],
-                ["Visa no.", detail.visa_number ?? "—"],
-                ["Visa expiry", formatDate(detail.visa_expiry)],
-                ["Emirates ID", detail.emirates_id ?? "—"],
-                ["Emirates ID expiry", formatDate(detail.emirates_id_expiry)],
-                ["Insurance expiry", formatDate(detail.insurance_expiry)],
-                ["Emergency contact", detail.emergency_contact_name ?? "—"],
-                ["Emergency phone", detail.emergency_contact_phone ?? "—"],
-                ["Relation", detail.emergency_contact_relation ?? "—"],
-                ["Address", detail.address ?? "—"],
-                ["Notes", detail.notes ?? "—"],
+                ...(fullAccess
+                  ? ([
+                      ["Nationality", detail.nationality ?? "—"],
+                      ["Date of birth", formatDate(detail.date_of_birth)],
+                      ["Joining date", formatDate(detail.joining_date)],
+                      ["Contract end", formatDate(detail.contract_end_date)],
+                      ["Passport no.", detail.passport_number ?? "—"],
+                      ["Passport expiry", formatDate(detail.passport_expiry)],
+                      ["Visa no.", detail.visa_number ?? "—"],
+                      ["Visa expiry", formatDate(detail.visa_expiry)],
+                      ["Emirates ID", detail.emirates_id ?? "—"],
+                      ["Emirates ID expiry", formatDate(detail.emirates_id_expiry)],
+                      ["Insurance expiry", formatDate(detail.insurance_expiry)],
+                      ["Emergency contact", detail.emergency_contact_name ?? "—"],
+                      ["Emergency phone", detail.emergency_contact_phone ?? "—"],
+                      ["Relation", detail.emergency_contact_relation ?? "—"],
+                      ["Address", detail.address ?? "—"],
+                      ["Notes", detail.notes ?? "—"],
+                    ] as [string, string][])
+                  : []),
               ] as [string, string][]).map(([k, v]) => (
                 <div key={k}>
                   <p className="text-xs text-muted-foreground">{k}</p>
