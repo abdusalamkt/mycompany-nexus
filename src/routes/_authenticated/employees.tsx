@@ -92,7 +92,7 @@ function EmployeesPage() {
   const canEdit = can("employees.edit");
   const deptName = (id: string | null) => departments.find((d) => d.id === id)?.name ?? "Unassigned";
 
-  const canSeeDocs = can("employees.edit") || can("employees.create") || can("users.view");
+  const canSeeDocs = fullAccess && (can("employees.edit") || can("employees.create") || can("users.view"));
 
   function Grid({ items }: { items: EmployeeRecord[] }) {
     if (items.length === 0) return <EmptyState title="No employees in this department yet" />;
