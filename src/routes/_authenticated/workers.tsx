@@ -36,12 +36,17 @@ function WorkersPage() {
   const { can } = useSession();
   const [search, setSearch] = useState("");
 
+  const fullAccess = can("workers.view");
+  const directoryOnly = !fullAccess && can("workers.view_directory");
+
   const query = useQuery({
-    queryKey: ["workers"],
-    enabled: can("workers.view"),
+    queryKey: ["workers", fullAccess ? "full" : "directory"],
+    enabled: fullAccess || directoryOnly,
     queryFn: async () => {
       const [workersRes, departmentsRes] = await Promise.all([
-        supabase.from("workers").select("*").order("full_name"),
+        fullAccess
+          ? supabase.from("workers").select("*").order("full_name")
+          : supabase.rpc("worker_directory"),
         supabase.from("departments").select("id, name").eq("is_active", true).order("name"),
       ]);
       if (workersRes.error) throw workersRes.error;
@@ -53,7 +58,7 @@ function WorkersPage() {
   });
 
   const departments = query.data?.departments ?? [];
-  const canEdit = can("workers.edit");
+  const canEdit = fullAccess && can("workers.edit");
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
