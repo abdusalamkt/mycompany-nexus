@@ -80,7 +80,7 @@ function EmployeesPage() {
     );
   }, [query.data, search]);
 
-  if (!can("employees.view")) {
+  if (!fullAccess && !directoryOnly) {
     return (
       <AppShell title="Employees">
         <EmptyState title="You don't have access to the staff list"
