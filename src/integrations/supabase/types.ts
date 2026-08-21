@@ -649,6 +649,36 @@ export type Database = {
           code: string
         }[]
       }
+      staff_directory: {
+        Args: never
+        Returns: {
+          department_id: string
+          email: string
+          employee_code: string
+          employment_type: string
+          full_name: string
+          id: string
+          job_title: string
+          phone: string
+          photo_url: string
+          status: string
+        }[]
+      }
+      worker_directory: {
+        Args: never
+        Returns: {
+          department_id: string
+          employment_type: string
+          full_name: string
+          id: string
+          phone: string
+          photo_url: string
+          site: string
+          status: string
+          trade: string
+          worker_code: string
+        }[]
+      }
     }
     Enums: {
       user_status: "active" | "inactive" | "suspended"
