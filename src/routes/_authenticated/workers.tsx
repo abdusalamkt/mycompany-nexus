@@ -108,20 +108,24 @@ function WorkersPage() {
                     <p className="flex items-center gap-2 truncate"><Phone className="size-3.5 shrink-0" />{w.phone ?? "—"}</p>
                   </div>
 
-                  <div className="col-span-2 min-w-0 lg:col-span-1">
-                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">Document expiry</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {([
-                        ["Passport", w.passport_expiry],
-                        ["Visa", w.visa_expiry],
-                        ["Emirates ID", w.emirates_id_expiry],
-                        ["Labour card", w.labour_card_expiry],
-                        ["Insurance", w.insurance_expiry],
-                      ] as [string, string | null][]).map(([name, d]) => (
-                        <StatusBadge key={name} status={expiryStatus(d)} label={`${name}: ${d ? formatDate(d) : "Missing"}`} />
-                      ))}
+                  {fullAccess ? (
+                    <div className="col-span-2 min-w-0 lg:col-span-1">
+                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">Document expiry</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {([
+                          ["Passport", w.passport_expiry],
+                          ["Visa", w.visa_expiry],
+                          ["Emirates ID", w.emirates_id_expiry],
+                          ["Labour card", w.labour_card_expiry],
+                          ["Insurance", w.insurance_expiry],
+                        ] as [string, string | null][]).map(([name, d]) => (
+                          <StatusBadge key={name} status={expiryStatus(d)} label={`${name}: ${d ? formatDate(d) : "Missing"}`} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="hidden lg:block" />
+                  )}
 
                   <div className="shrink-0">
                     {canEdit && (
