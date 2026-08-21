@@ -50,12 +50,17 @@ function EmployeesPage() {
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState<EmployeeRecord | null>(null);
 
+  const fullAccess = can("employees.view");
+  const directoryOnly = !fullAccess && can("employees.view_directory");
+
   const query = useQuery({
-    queryKey: ["employees"],
-    enabled: can("employees.view"),
+    queryKey: ["employees", fullAccess ? "full" : "directory"],
+    enabled: fullAccess || directoryOnly,
     queryFn: async () => {
       const [employeesRes, departmentsRes] = await Promise.all([
-        supabase.from("employees").select("*").order("full_name"),
+        fullAccess
+          ? supabase.from("employees").select("*").order("full_name")
+          : supabase.rpc("staff_directory"),
         supabase.from("departments").select("id, name").eq("is_active", true).order("name"),
       ]);
       if (employeesRes.error) throw employeesRes.error;
