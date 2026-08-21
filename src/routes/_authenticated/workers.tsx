@@ -67,7 +67,7 @@ function WorkersPage() {
     );
   }, [query.data, search]);
 
-  if (!can("workers.view")) {
+  if (!fullAccess && !directoryOnly) {
     return (
       <AppShell title="Workers">
         <EmptyState title="You don't have access to the workers module" />
