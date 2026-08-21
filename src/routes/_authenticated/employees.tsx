@@ -177,7 +177,9 @@ function EmployeesPage() {
   return (
     <AppShell
       title="Employees"
-      description="Staff records grouped by department, with photos and document details."
+      description={fullAccess
+        ? "Staff records grouped by department, with photos and document details."
+        : "Company staff directory grouped by department."}
       actions={
         can("employees.create") ? (
           <EmployeeFormDialog

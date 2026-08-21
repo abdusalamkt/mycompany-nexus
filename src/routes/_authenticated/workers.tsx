@@ -147,7 +147,9 @@ function WorkersPage() {
   return (
     <AppShell
       title="Workers"
-      description="Site workforce with trades, sites and document expiry status."
+      description={fullAccess
+        ? "Site workforce with trades, sites and document expiry status."
+        : "Site workforce directory with trades and sites."}
       actions={can("workers.create") ? (
         <WorkerFormDialog departments={departments}
           trigger={<Button><Plus className="size-4" />Add worker</Button>} />
