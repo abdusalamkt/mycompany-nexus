@@ -80,67 +80,51 @@ function WorkersPage() {
   function Rows({ items }: { items: WorkerRecord[] }) {
     if (items.length === 0) return <EmptyState title="No workers in this group yet" />;
     return (
-      <div className="space-y-3">
-        {items.map((w) => {
-          const photo = w.photo_url ? query.data?.photos[w.photo_url] : undefined;
-          return (
-            <Card key={w.id}>
-              <CardContent className="p-4">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 lg:grid-cols-[minmax(220px,1.4fr)_minmax(0,1.4fr)_minmax(0,1.6fr)_auto]">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <Avatar className="size-12 shrink-0">
-                      {photo ? <AvatarImage src={photo} alt={w.full_name} /> : null}
-                      <AvatarFallback>{initialsOf(w.full_name)}</AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold">{w.full_name}</p>
-                      <p className="truncate text-sm text-muted-foreground">{w.trade ?? "—"}</p>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                        <Badge variant="secondary">{label(EMPLOYEE_STATUSES, w.status)}</Badge>
-                        <Badge variant="outline">{label(EMPLOYMENT_TYPES, w.employment_type)}</Badge>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 min-w-0 space-y-1 text-sm text-muted-foreground lg:col-span-1">
-                    <p className="flex items-center gap-2 truncate"><HardHat className="size-3.5 shrink-0" />ID {w.worker_code ?? "—"} · {deptName(w.department_id)}</p>
-                    <p className="flex items-center gap-2 truncate"><MapPin className="size-3.5 shrink-0" />{w.site ?? "No site assigned"}</p>
-                    <p className="flex items-center gap-2 truncate"><Phone className="size-3.5 shrink-0" />{w.phone ?? "—"}</p>
-                  </div>
-
-                  {fullAccess ? (
-                    <div className="col-span-2 min-w-0 lg:col-span-1">
-                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">Document expiry</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {([
-                          ["Passport", w.passport_expiry],
-                          ["Visa", w.visa_expiry],
-                          ["Emirates ID", w.emirates_id_expiry],
-                          ["Labour card", w.labour_card_expiry],
-                          ["Insurance", w.insurance_expiry],
-                        ] as [string, string | null][]).map(([name, d]) => (
-                          <StatusBadge key={name} status={expiryStatus(d)} label={`${name}: ${d ? formatDate(d) : "Missing"}`} />
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="hidden lg:block" />
-                  )}
-
-                  <div className="shrink-0">
-                    {canEdit && (
-                      <WorkerFormDialog worker={w} departments={departments}
-                        trigger={<Button variant="outline" size="sm"><Pencil className="size-3.5" />Edit</Button>} />
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      <div className={view === "grid" ? "grid gap-4 sm:grid-cols-2 xl:grid-cols-3" : "space-y-3"}>
+        {items.map((w) => (
+          <PersonCard
+            key={w.id}
+            view={view}
+            name={w.full_name}
+            subtitle={w.trade ?? "—"}
+            accent={w.site ?? "No site assigned"}
+            {...(w.photo_url && query.data?.photos[w.photo_url]
+              ? { photo: query.data.photos[w.photo_url] as string }
+              : {})}
+            badges={
+              <>
+                <Badge variant="secondary">{label(EMPLOYEE_STATUSES, w.status)}</Badge>
+                <Badge variant="outline">{label(EMPLOYMENT_TYPES, w.employment_type)}</Badge>
+              </>
+            }
+            meta={[
+              { icon: <HardHat className="size-3.5" />, text: `ID ${w.worker_code ?? "—"} · ${deptName(w.department_id)}` },
+              { icon: <MapPin className="size-3.5" />, text: w.site ?? "No site assigned" },
+              { icon: <Phone className="size-3.5" />, text: w.phone ?? "—" },
+            ]}
+            {...(fullAccess
+              ? {
+                  docs: [
+                    ["Passport", w.passport_expiry],
+                    ["Visa", w.visa_expiry],
+                    ["Emirates ID", w.emirates_id_expiry],
+                    ["Labour card", w.labour_card_expiry],
+                    ["Insurance", w.insurance_expiry],
+                  ] as [string, string | null][],
+                }
+              : {})}
+            actions={
+              canEdit ? (
+                <WorkerFormDialog worker={w} departments={departments}
+                  trigger={<Button variant="outline" size="sm"><Pencil className="size-3.5" />Edit</Button>} />
+              ) : null
+            }
+          />
+        ))}
       </div>
     );
   }
+
 
   const sites = Array.from(new Set(filtered.map((w) => w.site).filter((s): s is string => !!s))).sort();
 
