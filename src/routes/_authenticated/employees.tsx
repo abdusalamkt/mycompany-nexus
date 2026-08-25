@@ -5,7 +5,7 @@ import { Plus, Mail, Phone, Pencil, Building2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import {
-  EMPLOYEE_STATUSES, EMPLOYMENT_TYPES, formatDate, initialsOf, signPhotoUrls,
+  EMPLOYEE_STATUSES, EMPLOYMENT_TYPES, formatDate, signPhotoUrls,
   type EmployeeRecord,
 } from "@/lib/employees";
 import { AppShell } from "@/components/portal/AppShell";
