@@ -169,11 +169,19 @@ function EmployeesPage() {
       }
     >
       <Card className="mb-4">
-        <CardContent className="pt-6">
-          <Input className="max-w-sm" placeholder="Search name, ID, email or job title"
-            value={search} onChange={(e) => setSearch(e.target.value)} />
+        <CardContent className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pt-6">
+          <div className="relative min-w-0 max-w-sm">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input className="pl-9" placeholder="Search name, ID, email or job title"
+              value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="hidden text-sm text-muted-foreground sm:inline">{filtered.length} shown</span>
+            <ViewToggle value={view} onChange={setView} />
+          </div>
         </CardContent>
       </Card>
+
 
       {query.isLoading ? (
         <LoadingState />
