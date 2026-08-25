@@ -50,6 +50,7 @@ function EmployeesPage() {
   const { can } = useSession();
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState<EmployeeRecord | null>(null);
+  const [view, setView] = useState<PeopleView>("grid");
 
   const fullAccess = can("employees.view");
   const directoryOnly = !fullAccess && can("employees.view_directory");
