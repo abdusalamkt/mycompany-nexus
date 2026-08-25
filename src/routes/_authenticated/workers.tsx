@@ -1,15 +1,14 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Phone, Pencil, HardHat, MapPin } from "lucide-react";
+import { Plus, Phone, Pencil, HardHat, MapPin, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { EMPLOYEE_STATUSES, EMPLOYMENT_TYPES, formatDate, initialsOf, signPhotoUrls } from "@/lib/employees";
+import { EMPLOYEE_STATUSES, EMPLOYMENT_TYPES, signPhotoUrls } from "@/lib/employees";
 import { AppShell } from "@/components/portal/AppShell";
 import { WorkerFormDialog, type WorkerRecord } from "@/components/portal/WorkerFormDialog";
+import { PersonCard, ViewToggle, type PeopleView } from "@/components/portal/PersonCard";
 import { EmptyState, ErrorState, LoadingState } from "@/components/portal/States";
-import { StatusBadge, expiryStatus } from "@/components/portal/StatusBadge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,6 +34,7 @@ const label = (list: { value: string; label: string }[], v: string) =>
 function WorkersPage() {
   const { can } = useSession();
   const [search, setSearch] = useState("");
+  const [view, setView] = useState<PeopleView>("grid");
 
   const fullAccess = can("workers.view");
   const directoryOnly = !fullAccess && can("workers.view_directory");
@@ -140,9 +140,16 @@ function WorkersPage() {
       ) : null}
     >
       <Card className="mb-4">
-        <CardContent className="pt-6">
-          <Input className="max-w-sm" placeholder="Search name, ID, trade or site"
-            value={search} onChange={(e) => setSearch(e.target.value)} />
+        <CardContent className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pt-6">
+          <div className="relative min-w-0 max-w-sm">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input className="pl-9" placeholder="Search name, ID, trade or site"
+              value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="hidden text-sm text-muted-foreground sm:inline">{filtered.length} shown</span>
+            <ViewToggle value={view} onChange={setView} />
+          </div>
         </CardContent>
       </Card>
 
