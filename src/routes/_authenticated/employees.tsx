@@ -12,8 +12,6 @@ import { AppShell } from "@/components/portal/AppShell";
 import { EmployeeFormDialog } from "@/components/portal/EmployeeFormDialog";
 import { PersonCard, ViewToggle, type PeopleView } from "@/components/portal/PersonCard";
 import { EmptyState, ErrorState, LoadingState } from "@/components/portal/States";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { StatusBadge, expiryStatus } from "@/components/portal/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
