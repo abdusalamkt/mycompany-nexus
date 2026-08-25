@@ -41,7 +41,7 @@ export type MetaItem = { icon: ReactNode; text: string };
 export type PersonCardProps = {
   name: string;
   subtitle?: string | null;
-  photo?: string;
+  photo?: string | undefined;
   accent?: string | null;
   badges?: ReactNode;
   meta: MetaItem[];
@@ -51,7 +51,7 @@ export type PersonCardProps = {
   view?: PeopleView;
 };
 
-function Photo({ name, photo, size }: { name: string; photo?: string; size: string }) {
+function Photo({ name, photo, size }: { name: string; photo?: string | undefined; size: string }) {
   return (
     <Avatar className={cn(size, "shrink-0 ring-2 ring-primary/15 ring-offset-2 ring-offset-card")}>
       {photo ? <AvatarImage src={photo} alt={name} className="object-cover" /> : null}
