@@ -106,7 +106,6 @@ function EmployeesPage() {
             view={view}
             name={e.full_name}
             subtitle={e.job_title ?? "—"}
-            accent={`${deptName(e.department_id)} · ID ${e.employee_code ?? "—"}`}
             {...(e.photo_url && query.data?.photos[e.photo_url]
               ? { photo: query.data.photos[e.photo_url] as string }
               : {})}

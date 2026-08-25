@@ -87,7 +87,6 @@ function WorkersPage() {
             view={view}
             name={w.full_name}
             subtitle={w.trade ?? "—"}
-            accent={w.site ?? "No site assigned"}
             {...(w.photo_url && query.data?.photos[w.photo_url]
               ? { photo: query.data.photos[w.photo_url] as string }
               : {})}
