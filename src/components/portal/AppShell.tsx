@@ -3,7 +3,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   LayoutDashboard, Users, Building2, ShieldCheck, ScrollText, Newspaper,
-  FileText, IdCard, Menu, LogOut, Bell, Search, Settings, UserCog, Briefcase,
+  FileText, IdCard, CalendarDays, Menu, LogOut, Bell, Search, Settings, UserCog, Briefcase,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
@@ -40,6 +40,7 @@ const NAV: NavGroup[] = [
     items: [
       { label: "Staff List", to: "/employees", icon: Users, anyPermission: ["employees.view", "employees.view_directory"] },
       { label: "Workers", to: "/workers", icon: Briefcase, anyPermission: ["workers.view", "workers.view_directory"] },
+      { label: "Leave", to: "/leaves", icon: CalendarDays, permission: "leaves.view" },
       { label: "My Profile", to: "/profile", icon: IdCard },
     ],
   },
