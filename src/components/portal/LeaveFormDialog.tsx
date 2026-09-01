@@ -162,7 +162,7 @@ export function LeaveFormDialog({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <Field label="Person">
-              <Select value={draft.person_key || undefined} onValueChange={set("person_key")}>
+              <Select {...(draft.person_key ? { value: draft.person_key } : {})} onValueChange={set("person_key")}>
                 <SelectTrigger><SelectValue placeholder="Select staff or worker" /></SelectTrigger>
                 <SelectContent>
                   {people.map((p) => (
