@@ -50,6 +50,84 @@ export type Database = {
         }
         Relationships: []
       }
+      certificates: {
+        Row: {
+          certificate_number: string | null
+          certificate_type: string
+          created_at: string
+          created_by: string | null
+          employee_id: string | null
+          expiry_date: string | null
+          file_name: string | null
+          file_path: string | null
+          holder_name: string | null
+          holder_type: string
+          id: string
+          issue_date: string | null
+          issuing_authority: string | null
+          notes: string | null
+          status: string
+          title: string
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          certificate_number?: string | null
+          certificate_type?: string
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string | null
+          expiry_date?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          holder_name?: string | null
+          holder_type?: string
+          id?: string
+          issue_date?: string | null
+          issuing_authority?: string | null
+          notes?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          certificate_number?: string | null
+          certificate_type?: string
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string | null
+          expiry_date?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          holder_name?: string | null
+          holder_type?: string
+          id?: string
+          issue_date?: string | null
+          issuing_authority?: string | null
+          notes?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_policies: {
         Row: {
           category: string
