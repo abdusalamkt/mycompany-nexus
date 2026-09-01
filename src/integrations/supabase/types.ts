@@ -297,6 +297,79 @@ export type Database = {
           },
         ]
       }
+      leaves: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_id: string | null
+          employee_id: string | null
+          end_date: string
+          id: string
+          leave_type: string
+          person_name: string
+          person_type: string
+          remarks: string | null
+          start_date: string
+          status: string
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          employee_id?: string | null
+          end_date: string
+          id?: string
+          leave_type?: string
+          person_name: string
+          person_type?: string
+          remarks?: string | null
+          start_date: string
+          status?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          employee_id?: string | null
+          end_date?: string
+          id?: string
+          leave_type?: string
+          person_name?: string
+          person_type?: string
+          remarks?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leaves_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leaves_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leaves_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news_posts: {
         Row: {
           author_id: string | null
