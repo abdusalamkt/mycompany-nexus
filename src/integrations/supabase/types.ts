@@ -487,6 +487,115 @@ export type Database = {
         }
         Relationships: []
       }
+      org_chart_nodes: {
+        Row: {
+          chart_id: string
+          created_at: string
+          employee_id: string | null
+          id: string
+          parent_id: string | null
+          person_name: string
+          role_title: string | null
+          sort_order: number
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          chart_id: string
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          parent_id?: string | null
+          person_name: string
+          role_title?: string | null
+          sort_order?: number
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          chart_id?: string
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          parent_id?: string | null
+          person_name?: string
+          role_title?: string | null
+          sort_order?: number
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_chart_nodes_chart_id_fkey"
+            columns: ["chart_id"]
+            isOneToOne: false
+            referencedRelation: "org_charts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_chart_nodes_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_chart_nodes_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "org_chart_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_chart_nodes_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_charts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_id: string | null
+          description: string | null
+          id: string
+          is_published: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_charts_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permissions: {
         Row: {
           code: string

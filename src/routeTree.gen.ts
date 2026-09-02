@@ -19,6 +19,7 @@ import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedEmployeesRouteImport } from './routes/_authenticated/employees'
 import { Route as AuthenticatedLeavesRouteImport } from './routes/_authenticated/leaves'
 import { Route as AuthenticatedNewsRouteImport } from './routes/_authenticated/news'
+import { Route as AuthenticatedOrgChartRouteImport } from './routes/_authenticated/org-chart'
 import { Route as AuthenticatedPoliciesRouteImport } from './routes/_authenticated/policies'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWorkersRouteImport } from './routes/_authenticated/workers'
@@ -77,6 +78,11 @@ const AuthenticatedNewsRoute = AuthenticatedNewsRouteImport.update({
   path: '/news',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOrgChartRoute = AuthenticatedOrgChartRouteImport.update({
+  id: '/org-chart',
+  path: '/org-chart',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPoliciesRoute = AuthenticatedPoliciesRouteImport.update({
   id: '/policies',
   path: '/policies',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/employees': typeof AuthenticatedEmployeesRoute
   '/leaves': typeof AuthenticatedLeavesRoute
   '/news': typeof AuthenticatedNewsRoute
+  '/org-chart': typeof AuthenticatedOrgChartRoute
   '/policies': typeof AuthenticatedPoliciesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/workers': typeof AuthenticatedWorkersRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/employees': typeof AuthenticatedEmployeesRoute
   '/leaves': typeof AuthenticatedLeavesRoute
   '/news': typeof AuthenticatedNewsRoute
+  '/org-chart': typeof AuthenticatedOrgChartRoute
   '/policies': typeof AuthenticatedPoliciesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/workers': typeof AuthenticatedWorkersRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/_authenticated/employees': typeof AuthenticatedEmployeesRoute
   '/_authenticated/leaves': typeof AuthenticatedLeavesRoute
   '/_authenticated/news': typeof AuthenticatedNewsRoute
+  '/_authenticated/org-chart': typeof AuthenticatedOrgChartRoute
   '/_authenticated/policies': typeof AuthenticatedPoliciesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/workers': typeof AuthenticatedWorkersRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/employees'
     | '/leaves'
     | '/news'
+    | '/org-chart'
     | '/policies'
     | '/profile'
     | '/workers'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/employees'
     | '/leaves'
     | '/news'
+    | '/org-chart'
     | '/policies'
     | '/profile'
     | '/workers'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/_authenticated/employees'
     | '/_authenticated/leaves'
     | '/_authenticated/news'
+    | '/_authenticated/org-chart'
     | '/_authenticated/policies'
     | '/_authenticated/profile'
     | '/_authenticated/workers'
@@ -320,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNewsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/org-chart': {
+      id: '/_authenticated/org-chart'
+      path: '/org-chart'
+      fullPath: '/org-chart'
+      preLoaderRoute: typeof AuthenticatedOrgChartRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/policies': {
       id: '/_authenticated/policies'
       path: '/policies'
@@ -385,6 +404,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEmployeesRoute: typeof AuthenticatedEmployeesRoute
   AuthenticatedLeavesRoute: typeof AuthenticatedLeavesRoute
   AuthenticatedNewsRoute: typeof AuthenticatedNewsRoute
+  AuthenticatedOrgChartRoute: typeof AuthenticatedOrgChartRoute
   AuthenticatedPoliciesRoute: typeof AuthenticatedPoliciesRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedWorkersRoute: typeof AuthenticatedWorkersRoute
@@ -401,6 +421,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEmployeesRoute: AuthenticatedEmployeesRoute,
   AuthenticatedLeavesRoute: AuthenticatedLeavesRoute,
   AuthenticatedNewsRoute: AuthenticatedNewsRoute,
+  AuthenticatedOrgChartRoute: AuthenticatedOrgChartRoute,
   AuthenticatedPoliciesRoute: AuthenticatedPoliciesRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedWorkersRoute: AuthenticatedWorkersRoute,
