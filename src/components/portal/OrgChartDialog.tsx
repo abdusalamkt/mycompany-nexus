@@ -16,13 +16,14 @@ import {
 
 /** Create or rename a chart. On create it also seeds the root position. */
 export function OrgChartDialog({
-  chart, departments, people, trigger, onCreated,
+  chart, departments, people, trigger, onCreated, onDraftSave,
 }: {
   chart?: OrgChart;
   departments: { id: string; name: string }[];
   people: DirectoryPerson[];
   trigger: ReactNode;
   onCreated?: (id: string) => void;
+  onDraftSave?: (chart: OrgChart) => void;
 }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -50,6 +51,10 @@ export function OrgChartDialog({
           description: description.trim() || null,
           department_id: departmentId || null,
         };
+        if (onDraftSave) {
+          onDraftSave({ ...chart, ...payload });
+          return chart.id;
+        }
         const { error } = await supabase.from("org_charts").update(payload as never).eq("id", chart.id);
         if (error) throw error;
         await logAudit({ action: "org_chart.updated", module: "Org Chart", recordId: chart.id, newValue: payload });
@@ -59,11 +64,16 @@ export function OrgChartDialog({
       const rootLabel = (root?.name ?? rootName).trim();
       if (!rootLabel) throw new Error("Select the top position (root) of the chart.");
       const { data: userRes } = await supabase.auth.getUser();
+      const { data: creator } = userRes.user
+        ? await supabase.from("profiles").select("full_name, email").eq("id", userRes.user.id).maybeSingle()
+        : { data: null };
       const { data, error } = await supabase.from("org_charts").insert({
         name: name.trim(),
         description: description.trim() || null,
         department_id: departmentId || null,
         created_by: userRes.user?.id ?? null,
+        created_by_name: creator?.full_name ?? creator?.email ?? userRes.user?.email ?? "Unknown user",
+        revision_number: 1,
       } as never).select("id").single();
       if (error) throw error;
       const chartId = (data as { id: string }).id;
@@ -75,6 +85,8 @@ export function OrgChartDialog({
         worker_id: root?.type === "worker" ? root.id : null,
         person_name: rootLabel,
         role_title: rootRole.trim() || root?.subtitle || null,
+        node_type: "person",
+        description: null,
         sort_order: 0,
       } as never);
       if (nodeError) throw nodeError;
@@ -83,9 +95,12 @@ export function OrgChartDialog({
       return chartId;
     },
     onSuccess: (id) => {
-      toast.success(chart ? "Chart updated" : "Chart created");
-      qc.invalidateQueries({ queryKey: ["org-charts"] });
-      qc.invalidateQueries({ queryKey: ["org-chart-nodes", id] });
+      toast.success(chart && onDraftSave ? "Chart details added to the draft. Click Save chart to keep them."
+        : chart ? "Chart updated" : "Chart created");
+      if (!onDraftSave) {
+        qc.invalidateQueries({ queryKey: ["org-charts"] });
+        qc.invalidateQueries({ queryKey: ["org-chart-nodes", id] });
+      }
       setOpen(false);
       if (!chart && id) onCreated?.(id);
     },
