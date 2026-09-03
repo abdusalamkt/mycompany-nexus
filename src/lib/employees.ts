@@ -60,10 +60,16 @@ export function validatePhoto(file: File): { ok: true; path: string } | { ok: fa
 
 /** Resolves storage paths to short-lived signed URLs. */
 export async function signPhotoUrls(paths: string[]): Promise<Record<string, string>> {
-  const unique = Array.from(new Set(paths.filter(Boolean)));
-  if (unique.length === 0) return {};
+  const all = Array.from(new Set(paths.filter(Boolean)));
+  const map0: Record<string, string> = {};
+  const unique: string[] = [];
+  for (const p of all) {
+    if (p.startsWith("http://") || p.startsWith("https://")) map0[p] = p;
+    else unique.push(p);
+  }
+  if (unique.length === 0) return map0;
   const { data } = await supabase.storage.from(PHOTO_BUCKET).createSignedUrls(unique, 3600);
-  const map: Record<string, string> = {};
+  const map: Record<string, string> = { ...map0 };
   (data ?? []).forEach((entry, index) => {
     const key = entry.path ?? unique[index]!;
     if (entry.signedUrl) map[key] = entry.signedUrl;

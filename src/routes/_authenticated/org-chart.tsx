@@ -303,7 +303,7 @@ function OrgChartPage() {
             <ErrorState message={(nodesQuery.error as Error).message} />
           ) : tree.length === 0 ? (
             <EmptyState title="This chart has no positions yet"
-              description={canManage ? "Use “Add position” to place the first box." : undefined} />
+              {...(canManage ? { description: "Use “Add position” to place the first box." } : {})} />
           ) : (
             <div
               onDragOver={(e) => { if (canManage && dragId) { e.preventDefault(); setOverId("root"); } }}
