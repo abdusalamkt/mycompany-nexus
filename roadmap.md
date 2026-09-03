@@ -16,4 +16,3 @@
 - Certificates UI (register + expiry tracking)
 - Sales, Marketing, Production, O&P modules (permissions exist, no UI)
 - Notifications module
-EOF

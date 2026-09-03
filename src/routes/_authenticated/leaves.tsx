@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, CalendarDays, Search, User } from "lucide-react";
+import { Plus, Pencil, Trash2, CalendarDays, Search, User, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { formatDate } from "@/lib/employees";
@@ -195,12 +195,21 @@ function LeavesPage() {
     <AppShell
       title="Leave"
       description="Who is on leave, when they are away and why — visible to everyone in the company."
-      actions={canManage ? (
-        <LeaveFormDialog
-          people={peopleQuery.data ?? []}
-          trigger={<Button><Plus className="size-4" />Add leave</Button>}
-        />
-      ) : null}
+      actions={
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" asChild>
+            <a href="https://www.google.com" target="_blank" rel="noreferrer">
+              <ExternalLink className="size-4" />Apply for leave
+            </a>
+          </Button>
+          {canManage && (
+            <LeaveFormDialog
+              people={peopleQuery.data ?? []}
+              trigger={<Button><Plus className="size-4" />Add leave</Button>}
+            />
+          )}
+        </div>
+      }
     >
       <Card className="mb-4">
         <CardContent className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pt-6">
